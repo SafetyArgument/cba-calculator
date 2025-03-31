@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost Benefit Analysis to Reasonably Practicable Principle</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label { display: inline-block; width: 250px; margin: 5px 0; }
+        input, textarea { margin: 5px 0; }
+        fieldset { margin: 10px 0; }
+        .tooltip { position: relative; }
+        .tooltip .tooltiptext { 
+            visibility: hidden; 
+            width: 200px; 
+            background-color: #555; 
+            color: #fff; 
+            text-align: center; 
+            border-radius: 5px; 
+            padding: 5px; 
+            position: absolute; 
+            z-index: 1; 
+            bottom: 125%; 
+            left: 50%; 
+            margin-left: -100px; 
+            opacity: 0; 
+            transition: opacity 0.3s; 
+        }
+        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+        #results { margin-top: 20px; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Cost Benefit Analysis to Reasonably Practicable Principle</h1>
+    <form id="cbaForm">
+        <div class="tooltip">
+            <label for="riskDesc">Risk Description:</label>
+            <span class="tooltiptext">Describe the risk being analyzed.</span>
+        </div><br>
+        <textarea id="riskDesc" name="riskDesc" rows="4" cols="50"></textarea><br><br>
+        
+        <div class="tooltip">
+            <label for="frequency">Probability/Frequency of risk event (year⁻¹):</label>
+            <span class="tooltiptext">Annual probability or frequency of the risk event.</span>
+        </div>
+        <input type="number" id="frequency" name="frequency" step="0.01" min="0" required><br>
+        <span id="onceInXYears"></span><br>
+        <div class="tooltip">
+            <label for="freqDev">% deviation for sensitivity:</label>
+            <span class="tooltiptext">Absolute % deviation for sensitivity analysis.</span>
+        </div>
+        <input type="number" id="freqDev" name="freqDev" step="1" min="0" required><br><br>
+        
+        <fieldset>
+            <legend>Severity of Consequences (per event, equivalent fatalities)</legend>
+            <div class="tooltip">
+                <label for="fatality">Fatality (1 pu):</label>
+                <span class="tooltiptext">Number of fatalities per event.</span>
+            </div>
+            <input type="number" id="fatality" name="fatality" step="0.1" min="0" required><br>
+            <div class="tooltip">
+                <label for="majorInjury">Major injury (0.1 pu):</label>
+                <span class="tooltiptext">Number of major injuries per event.</span>
+            </div>
+            <input type="number" id="majorInjury" name="majorInjury" step="0.1" min="0" required><br>
+            <div class="tooltip">
+                <label for="class1Minor">Class 1 minor injury (0.005 pu):</label>
+                <span class="tooltiptext">Number of Class 1 minor injuries per event.</span>
+            </div>
+            <input type="number" id="class1Minor" name="class1Minor" step="0.1" min="0" required><br>
+            <div class="tooltip">
+                <label for="class2Minor">Class 2 minor injury (0.001 pu):</label>
+                <span class="tooltiptext">Number of Class 2 minor injuries per event.</span>
+            </div>
+            <input type="number" id="class2Minor" name="class2Minor" step="0.1" min="0" required><br>
+            <div class="tooltip">
+                <label for="class1Shock">Class 1 shock/trauma (0.005 pu):</label>
+                <span class="tooltiptext">Number of Class 1 shock/trauma incidents per event.</span>
+            </div>
+            <input type="number" id="class1Shock" name="class1Shock" step="0.1" min="0" required><br>
+            <div class="tooltip">
+                <label for="class2Shock">Class 2 shock/trauma (0.001 pu):</label>
+                <span class="tooltiptext">Number of Class 2 shock/trauma incidents per event.</span>
+            </div>
+            <input type="number" id="class2Shock" name="class2Shock" step="0.1" min="0" required><br>
+            <div class="tooltip">
+                <label for="severityDev">% deviation for sensitivity:</label>
+                <span class="tooltiptext">Absolute % deviation for total severity in sensitivity analysis.</span>
+            </div>
+            <input type="number" id="severityDev" name="severityDev" step="1" min="0" required><br>
+        </fieldset><br>
+        
+        <div class="tooltip">
+            <label for="riskX">Risk Rating X (out of Y):</label>
+            <span class="tooltiptext">Risk level X out of maximum Y per your risk matrix.</span>
+        </div>
+        <input type="number" id="riskX" name="riskX" step="1" min="0" required>
+        <div class="tooltip">
+            <label for="riskY">Y:</label>
+            <span class="tooltiptext">Maximum risk level Y in your risk matrix.</span>
+        </div>
+        <input type="number" id="riskY" name="riskY" step="1" min="1" required><br><br>
+        
+        <div class="tooltip">
+            <label for="designLife">Design Life (years):</label>
+            <span class="tooltiptext">Lifespan of the solution in years.</span>
+        </div>
+        <input type="number" id="designLife" name="designLife" step="1" min="1" required><br>
+        <div class="tooltip">
+            <label for="designLifeDev">% deviation for sensitivity:</label>
+            <span class="tooltiptext">Absolute % deviation for design life in sensitivity analysis.</span>
+        </div>
+        <input type="number" id="designLifeDev" name="designLifeDev" step="1" min="0" required><br><br>
+        
+        <div class="tooltip">
+            <label for="capex">CAPEX ($):</label>
+            <span class="tooltiptext">One-time capital expenditure for the solution.</span>
+        </div>
+        <input type="number" id="capex" name="capex" step="1000" min="0" required><br>
+        <div class="tooltip">
+            <label for="opex">OPEX ($ per year):</label>
+            <span class="tooltiptext">Annual operational expenditure for the solution.</span>
+        </div>
+        <input type="number" id="opex" name="opex" step="1000" min="0" required><br><br>
+        
+        <button type="button" onclick="calculate()">Calculate</button>
+    </form>
+    <div id="results"></div>
+    <footer style="margin-top: 20px;">
+        <p>Developed by Safety Argument Pty Ltd</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
